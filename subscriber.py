@@ -1,7 +1,8 @@
 from paho.mqtt import client as mqtt_client
 import random
 import time
-
+from flask import Flask
+from flask import jsonify
 broker = 'localhost'
 port = 1883
 topic = "fila/posto"
@@ -9,6 +10,11 @@ client_id = f'python-mqtt-{random.randint(0, 1000)}'
 # cache armazenando todas as filas de todos os postos
 gas_station_queues = []
 available_gas_stations = []
+
+app = Flask(__name__)
+@app.route("/", methods=("GET", "POST"))
+def serve_dados_publicados():
+    return jsonify(publish(client))
 
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
@@ -61,7 +67,7 @@ def run():
     client = connect_mqtt()
     subscribe(client)
     client.loop_forever()
-
+    app.run(host='localhost', port='12345')
 
 if __name__ == "__main__":
     run()

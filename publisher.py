@@ -1,11 +1,14 @@
 from paho.mqtt import client as mqtt_client
 import random
 import time
+from flask import Flask
+from flask import jsonify
 
 broker = 'localhost'
 port = 1883
 topic = "fila/posto"
 client_id = f'{random.randint(0, 1000)}' # Equivalente ao número do posto
+
 
 def connect_mqtt():
     def on_connect(client, userdata, flags, rc):
