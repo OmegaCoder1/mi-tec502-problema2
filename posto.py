@@ -1,15 +1,18 @@
+from paho.mqtt import client as mqtt_client
 import publisher
 from flask import Flask
+import random
+import time
 
-class Publisher():
+class Posto():
 
-    def __init__():
+    def __init__(self):
         self.broker    = 'localhost'
         self.port      = 1883
         self.topic     = "fila/posto"
         self.client_id = f'{random.randint(0, 1000)}'
 
-    def connect_mqtt():
+    def connect_mqtt(self):
         def on_connect(client, userdata, flags, rc):
             if rc == 0:
                 print("Conectado ao Broker MQTT!")
@@ -21,7 +24,7 @@ class Publisher():
             client.connect(broker, port)
             return client
 
-    def publish(client, msg):
+    def publish(self, client, msg):
         gas_sation_number = 0
         while True:
             time.sleep(5)
@@ -34,27 +37,43 @@ class Publisher():
                 print(f"Falha ao enviar mensagem ao tópico {topic}")
             gas_sation_number += 1
 
-class Posto(Publisher):
+    app = Flask(__name__)
 
-    def __init__(self) -> None:
-        self.fila = 0
-        self.publisher = publisher.connect_mqtt()
+    @app.route("/", methods=("GET", "POST"))
+    def serve_dados_publicados():
+        return jsonify(publish(client, msg))
 
-    def aumenta_fila(self) -> None:
-        self.fila += 1
-
-    def reduz_fila(self) -> None:
-        self.fila -= 1
-    
-
-    @posto.route("/")
-    def serve_dados_p_server():
-        return jsonify(self.publisher.publish(fila))
-
-
-def main():
-    novo_posto = Posto()
-    novo_posto.rand
-
+def principal():
+    posto = Posto()
+    enviador = posto.connect_mqtt()
+    enviador.loop_start()
+    # publish(posto)
+    app.run()
 
 if __name__ == "__main__":
+    principal()        
+
+# class Posto(Publisher):
+
+#     def __init__(self) -> None:
+#         self.fila = 0
+#         self.publisher = publisher.connect_mqtt()
+
+#     def aumenta_fila(self) -> None:
+#         self.fila += 1
+
+#     def reduz_fila(self) -> None:
+#         self.fila -= 1
+    
+
+#     @posto.route("/")
+#     def serve_dados_p_server():
+#         return jsonify(self.publisher.publish(fila))
+
+
+# def main():
+#     novo_posto = Posto()
+#     novo_posto.rand
+
+
+# if __name__ == "__main__":
